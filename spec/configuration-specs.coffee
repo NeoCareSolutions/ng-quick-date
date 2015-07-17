@@ -7,7 +7,7 @@ describe "ngQuickDate", ->
     scope = undefined
     describe 'Given that a non-default label format is configured', ->
       beforeEach(module('ngQuickDate', (ngQuickDateDefaultsProvider) ->
-        ngQuickDateDefaultsProvider.set('labelFormat', 'yyyy-MM-d')
+        ngQuickDateDefaultsProvider.set('labelFormat', 'YYYY-MM-DD')
         null
       ))
       
@@ -19,22 +19,22 @@ describe "ngQuickDate", ->
           scope.$digest()
         ))
         it 'should be labeled in the same format as it was configured', ->
-          expect($(element).find('.quickdate-button').text()).toEqual('2013-08-1')
+          expect($(element).find('.quickdate-button').text()).toEqual('2013-08-01')
 
     describe 'Given that a non-default date format is configured', ->
       beforeEach(module('ngQuickDate', (ngQuickDateDefaultsProvider) ->
-        ngQuickDateDefaultsProvider.set('dateFormat', 'yy-M-d')
+        ngQuickDateDefaultsProvider.set('dateFormat', 'YYYY-MM-DD')
         null
       ))
         
       describe 'and given a basic datepicker', ->
         beforeEach angular.mock.inject ($compile, $rootScope) ->
-          element = buildBasicDatepicker($compile, $rootScope, new Date(Date.parse('1/1/2013 1:00 PM')))
+          element = buildBasicDatepicker($compile, $rootScope, new Date(Date.parse('1/1/2013 1:00 pm')))
 
         it 'should use the proper format in the date input', ->
-          expect($(element).find('.quickdate-date-input').val()).toEqual('13-1-1')
+          expect($(element).find('.quickdate-date-input').val()).toEqual('2013-01-01')
         it 'should be use this date format in the label, but with time included', ->
-          expect($(element).find('.quickdate-button').text()).toEqual('13-1-1 1:00 PM')
+          expect($(element).find('.quickdate-button').text()).toEqual('2013-01-01 01:00 pm')
 
     describe 'Given that a non-default close button is configured', ->
       beforeEach(module('ngQuickDate', (ngQuickDateDefaultsProvider) ->
@@ -84,7 +84,7 @@ describe "ngQuickDate", ->
           scope.$digest()
 
         it 'does not display the inline class and not the configured default html in the button', ->
-          expect($(element).find('.quickdate-button').html()).toNotMatch('icon-time')
+          expect($(element).find('.quickdate-button').html()).not.toMatch('icon-time')
           expect($(element).find('.quickdate-button').html()).toMatch('icon-calendar')
 
     describe 'Given a default-configured datepicker', ->
@@ -120,29 +120,7 @@ describe "ngQuickDate", ->
           $rootScope.$digest()
         ))
         it 'shows the timepicker input', ->
-          expect($(element).find('.quickdate-input-wrapper:last').hasClass('ng-hide')).toNotEqual(true)
-
-
-    describe 'Given that it is configured with a custom date/time parser function that always returns July 1, 2013', ->
-      beforeEach(module('ngQuickDate', (ngQuickDateDefaultsProvider) ->
-        alwaysReturnsJulyFirst2013 = (str) -> new Date(2013, 6, 1)
-        ngQuickDateDefaultsProvider.set('parseDateFunction', alwaysReturnsJulyFirst2013)
-        null
-      ))
-      describe 'and a basic datepicker', ->
-        beforeEach(angular.mock.inject(($compile, $rootScope) ->
-          element = buildBasicDatepicker($compile, $rootScope)
-        ))
-
-        describe 'When the date input is changed to 1/1/2014', ->
-          beforeEach ->
-            $dateInput = $(element).find('.quickdate-date-input')
-            $dateInput.val('1/1/2014')
-            browserTrigger($dateInput, 'input')
-            browserTrigger($dateInput, 'blur')
-
-          it 'Changes the model date to July 1, 2013', ->
-            expect(element.scope().myDate).toMatch(/Jul 01 2013/)
+          expect($(element).find('.quickdate-input-wrapper:last').hasClass('ng-hide')).not.toEqual(true)
 
     describe 'Given that it is configured with a default placeholder', ->
       beforeEach(module('ngQuickDate', (ngQuickDateDefaultsProvider) ->

@@ -23,7 +23,7 @@ describe "ngQuickDate", ->
 
         scope.myDate = new Date(2013, 9, 25)
         scope.$digest()
-        expect(button.text()).toEqual "10/25/2013 12:00 AM"
+        expect(button.text()).toEqual "2013/10/25 12:00 am"
 
       it 'shows the proper value in the date input based on the value of the ng-model', ->
         scope.myDate = null
@@ -37,7 +37,7 @@ describe "ngQuickDate", ->
 
         scope.myDate = new Date(2013, 9, 25)
         scope.$digest()
-        expect(dateTextInput.val()).toEqual "10/25/2013"
+        expect(dateTextInput.val()).toEqual "2013/10/25"
 
     describe 'Given a datepicker with a string model', ->
       beforeEach angular.mock.inject(($compile, $rootScope) ->
@@ -74,7 +74,7 @@ describe "ngQuickDate", ->
         $textInput = undefined
         beforeEach ->
           $textInput = $(element).find(".quickdate-date-input")
-          $textInput.val('11/15/2013')
+          $textInput.val('2015-12-12')
           browserTrigger($textInput, 'input')
 
         it 'does not change the ngModel just yet', ->
@@ -85,15 +85,15 @@ describe "ngQuickDate", ->
             browserTrigger($textInput, 'blur')
 
           it 'updates ngModel properly', ->
-            expect(element.scope().myDate).toEqual(new Date(2013, 10, 15))
+            expect(element.scope().myDate).toEqual(new Date(2015, 11, 12))
 
           it 'changes the calendar to the proper month', ->
             $monthSpan = $(element).find(".quickdate-month")
-            expect($monthSpan.html()).toEqual('November 2013')
+            expect($monthSpan.html()).toEqual('December 2015')
 
           it 'highlights the selected date', ->
             selectedTd = $(element).find('.selected')
-            expect(selectedTd.text()).toEqual('15')
+            expect(selectedTd.text()).toEqual('12')
 
         # TODO: Spec not working. 'Enter' keypress not recognized. Seems to be working in demo.
         xdescribe 'and types Enter', ->
@@ -190,17 +190,17 @@ describe "ngQuickDate", ->
       $timeInput = undefined
       beforeEach angular.mock.inject(($compile, $rootScope) ->
         scope = $rootScope
-        scope.myDate = new Date(Date.parse('11/1/2013 1:00 PM'))
+        scope.myDate = new Date(Date.parse('2013/11/01 1:00 pm'))
         element = $compile("<quick-datepicker ng-model='myDate' />")(scope)
         scope.$apply()
         $timeInput = $(element).find('.quickdate-time-input')
       )
-      it 'shows the proper time in the Time input box', ->
-        expect($timeInput.val()).toEqual('1:00 PM')
+      it 'shows the proper time in the Time 2013/10/25', ->
+        expect($timeInput.val()).toEqual('01:00 pm')
 
       describe 'and I type in a new valid time', ->
         beforeEach ->
-          $timeInput.val('3:00 pm')
+          $timeInput.val('03:00 pm')
           browserTrigger($timeInput, 'input')
           browserTrigger($timeInput, 'blur')
           scope.$apply()
@@ -209,12 +209,12 @@ describe "ngQuickDate", ->
           expect(element.scope().myDate).toEqual(new Date(Date.parse('11/1/2013 3:00 PM')))
 
         it 'updates the input to use the proper time format', ->
-          expect($timeInput.val()).toEqual('3:00 PM')
+          expect($timeInput.val()).toEqual('03:00 pm')
 
     describe 'Given a basic datepicker set to today', ->
       beforeEach(inject(($compile, $rootScope) ->
         scope = $rootScope
-        scope.myDate = new Date(Date.parse('11/1/2013 1:00 PM'))
+        scope.myDate = new Date(Date.parse('11/1/2013 01:00 pm'))
         element = $compile("<quick-datepicker ng-model='myDate' />")(scope)
         scope.$apply()
       ))
@@ -230,12 +230,12 @@ describe "ngQuickDate", ->
     describe "Given a datepicker with a valid init-value attribute", ->
       beforeEach(inject(($compile, $rootScope) ->
         scope = $rootScope
-        element = $compile("<quick-datepicker ng-model='someDate' init-value='2/1/2014 2:00 PM' />")(scope)
+        element = $compile("<quick-datepicker ng-model='someDate' init-value='2/1/2014 02:00 pm' />")(scope)
         scope.$apply()
       ))
 
       it 'should set the model to the specified initial value', ->
-        expect(Date.parse(element.scope().someDate)).toEqual(Date.parse('2/1/2014 2:00 PM'))
+        expect(Date.parse(element.scope().someDate)).toEqual(Date.parse('2/1/2014 02:00 pm'))
 
 
     describe "Given a datepicker with an 'on-change' method to call", ->
@@ -285,12 +285,12 @@ describe "ngQuickDate", ->
       beforeEach(inject(($compile, $rootScope) ->
         scope = $rootScope
         scope.myDate = new Date(2014, 2, 17) # March 17th, 2014
-        element = $compile("<quick-datepicker ng-model='myDate' date-format='d/M/yyyy' />")(scope)
+        element = $compile("<quick-datepicker ng-model='myDate' date-format='DD/MM/YYYY' />")(scope)
         scope.$digest()
       ))
       it 'should show the date format properly in the date input', ->
         $textInput = $(element).find(".quickdate-date-input")
-        expect($textInput.val()).toEqual("17/3/2014")
+        expect($textInput.val()).toEqual("17/03/2014")
 
 
     describe 'Given normal datepicker with no date filter function', ->
@@ -329,12 +329,12 @@ describe "ngQuickDate", ->
         $textInput = undefined
         beforeEach ->
           $textInput = $(element).find(".quickdate-date-input")
-          $textInput.val('01/18/2014') # A saturday
+          $textInput.val('2015/07/18') # A saturday
           browserTrigger($textInput, 'input')
           browserTrigger($textInput, 'blur')
 
         it 'should revert back to the previous date after blur', ->
-          expect(element.scope().myDate).toEqual(new Date(Date.parse('1/1/2014')))
+          expect(element.scope().myDate).toEqual(new Date(Date.parse('2014/01/01')))
 
         it 'should have an error class', ->
           expect($textInput.hasClass('ng-invalid')).toBe(true)

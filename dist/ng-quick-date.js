@@ -6,8 +6,8 @@
   app.provider("ngQuickDateDefaults", function() {
     return {
       options: {
-        dateFormat: 'M/d/yyyy',
-        timeFormat: 'h:mm a',
+        dateFormat: 'YYYY/MM/DD',
+        timeFormat: 'hh:mm a',
         labelFormat: null,
         placeholder: 'Click to Set Date',
         hoverText: null,
@@ -116,19 +116,28 @@
           });
           refreshView = function() {
             var date;
-            date = ngModelCtrl.$modelValue ? parseDateString(ngModelCtrl.$modelValue) : null;
+            date = null;
+            if (ngModelCtrl.$modelValue) {
+              date = ngModelCtrl.$modelValue;
+              if (typeof ngModelCtrl.$modelValue === 'string') {
+                date = moment.parseZone(ngModelCtrl.$modelValue);
+              }
+            }
             setupCalendarView();
             setInputFieldValues(date);
-            scope.mainButtonStr = date ? $filter('date')(date, scope.labelFormat) : scope.placeholder;
+            scope.mainButtonStr = date ? moment.parseZone(ngModelCtrl.$modelValue).format(scope.labelFormat) : scope.placeholder;
             return scope.invalid = ngModelCtrl.$invalid;
           };
           setInputFieldValues = function(val) {
-            if (val != null) {
-              scope.inputDate = $filter('date')(val, scope.dateFormat);
-              return scope.inputTime = $filter('date')(val, scope.timeFormat);
+            if (val !== null) {
+              if (val instanceof Date) {
+                val = moment(val);
+              }
+              scope.inputDate = val.format(scope.dateFormat);
+              scope.inputTime = val.format(scope.timeFormat);
             } else {
               scope.inputDate = null;
-              return scope.inputTime = null;
+              scope.inputTime = null;
             }
           };
           setCalendarDate = function(val) {
@@ -295,8 +304,12 @@
             return true;
           };
           scope.selectDateFromInput = function(closeCalendar) {
-            var err, tmpDate, tmpDateAndTime, tmpTime;
-            if (closeCalendar == null) {
+            var err, tmpDate, tmpDateAndTime, tmpTime, _error;
+            err = void 0;
+            tmpDate = void 0;
+            tmpDateAndTime = void 0;
+            tmpTime = void 0;
+            if (closeCalendar === null) {
               closeCalendar = false;
             }
             try {
@@ -306,7 +319,7 @@
               }
               if (!scope.disableTimepicker && scope.inputTime && scope.inputTime.length && tmpDate) {
                 tmpTime = scope.disableTimepicker ? '00:00:00' : scope.inputTime;
-                tmpDateAndTime = parseDateString("" + scope.inputDate + " " + tmpTime);
+                tmpDateAndTime = moment(scope.inputDate + 'T' + tmpTime, 'YYYY-MM-DDThh:mm:ss a').toDate();
                 if (!tmpDateAndTime) {
                   throw 'Invalid Time';
                 }
@@ -323,6 +336,7 @@
               scope.inputDateErr = false;
               return scope.inputTimeErr = false;
             } catch (_error) {
+              _error = _error;
               err = _error;
               if (err === 'Invalid Date') {
                 return scope.inputDateErr = true;

@@ -13,8 +13,8 @@ app = angular.module("ngQuickDate", [])
 app.provider "ngQuickDateDefaults", ->
   {
     options: {
-      dateFormat: 'M/d/yyyy'
-      timeFormat: 'h:mm a'
+      dateFormat: 'YYYY/MM/DD'
+      timeFormat: 'hh:mm a'
       labelFormat: null
       placeholder: 'Click to Set Date'
       hoverText: null
@@ -109,22 +109,30 @@ app.directive "quickDatepicker", ['ngQuickDateDefaults', '$filter', '$sce', (ngQ
     # ================================
 
     # Refresh the calendar, the input dates, and the button date
+    # uses moment to solve a bug in FF and Safari
     refreshView = ->
-      date = if ngModelCtrl.$modelValue then parseDateString(ngModelCtrl.$modelValue) else null
+      date = null
+      if ngModelCtrl.$modelValue
+        date = ngModelCtrl.$modelValue
+        if typeof ngModelCtrl.$modelValue == 'string'
+          date = moment.parseZone(ngModelCtrl.$modelValue)
       setupCalendarView()
-      setInputFieldValues(date)
-      scope.mainButtonStr = if date then $filter('date')(date, scope.labelFormat) else scope.placeholder
+      setInputFieldValues date
+      scope.mainButtonStr = if date then moment.parseZone(ngModelCtrl.$modelValue).format(scope.labelFormat) else scope.placeholder
       scope.invalid = ngModelCtrl.$invalid
 
 
     # Set the values used in the 2 input fields
     setInputFieldValues = (val) ->
-      if val?
-        scope.inputDate = $filter('date')(val, scope.dateFormat)
-        scope.inputTime = $filter('date')(val, scope.timeFormat)
+      if val != null
+        if val instanceof Date
+          val = moment(val)
+        scope.inputDate = val.format(scope.dateFormat)
+        scope.inputTime = val.format(scope.timeFormat)
       else
         scope.inputDate = null
         scope.inputTime = null
+      return
 
     # Set the date that is used by the calendar to determine which month to show
     # Defaults to the current month
@@ -247,7 +255,7 @@ app.directive "quickDatepicker", ['ngQuickDateDefaults', '$filter', '$sce', (ngQ
 
     # DATA WATCHES
     # ==================================
-    
+
     # Called when the model is updated from outside the datepicker
     ngModelCtrl.$render = ->
       setCalendarDate(ngModelCtrl.$viewValue)
@@ -293,32 +301,37 @@ app.directive "quickDatepicker", ['ngQuickDateDefaults', '$filter', '$sce', (ngQ
       true
 
     # This is triggered when the date or time inputs have a blur or enter event.
-    scope.selectDateFromInput = (closeCalendar=false) ->
+    scope.selectDateFromInput = (closeCalendar) ->
+      err = undefined
+      tmpDate = undefined
+      tmpDateAndTime = undefined
+      tmpTime = undefined
+      if closeCalendar == null
+        closeCalendar = false
       try
         tmpDate = parseDateString(scope.inputDate)
         if !tmpDate
           throw 'Invalid Date'
-        if !scope.disableTimepicker && scope.inputTime and scope.inputTime.length and tmpDate
+        if !scope.disableTimepicker and scope.inputTime and scope.inputTime.length and tmpDate
           tmpTime = if scope.disableTimepicker then '00:00:00' else scope.inputTime
-          tmpDateAndTime = parseDateString("#{scope.inputDate} #{tmpTime}")
+          tmpDateAndTime = moment(scope.inputDate + 'T' + tmpTime, 'YYYY-MM-DDThh:mm:ss a').toDate()
           if !tmpDateAndTime
             throw 'Invalid Time'
           tmpDate = tmpDateAndTime
-        unless datesAreEqualToMinute(ngModelCtrl.$viewValue, tmpDate)
+        if !datesAreEqualToMinute(ngModelCtrl.$viewValue, tmpDate)
           if !scope.selectDate(tmpDate, false)
             throw 'Invalid Date'
-
         if closeCalendar
-          scope.toggleCalendar(false)
-
+          scope.toggleCalendar false
         scope.inputDateErr = false
-        scope.inputTimeErr = false
-
-      catch err
+        return scope.inputTimeErr = false
+      catch _error
+        err = _error
         if err == 'Invalid Date'
-          scope.inputDateErr = true
+          return scope.inputDateErr = true
         else if err == 'Invalid Time'
-          scope.inputTimeErr = true
+          return scope.inputTimeErr = true
+      return
 
     # When tab is pressed from the date input and the timepicker
     # is disabled, close the popup

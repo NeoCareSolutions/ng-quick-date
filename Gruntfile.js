@@ -11,6 +11,12 @@ module.exports = function(grunt) {
         }
       }
     },
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
+    },
     uglify: {
       my_target: {
         files: {
@@ -42,6 +48,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-karma');
 
-  grunt.registerTask('default', ['coffee', 'uglify', 'less', 'watch']);
+  grunt.registerTask('test', ['karma']);
+
+  grunt.registerTask('default', ['test', 'coffee', 'uglify', 'less']);
 };

@@ -1,11 +1,3 @@
-## Deprecated:
-
-Sorry everyone, but I just don't have time to work on this anymore. Also, after using this in my own app, I realized that it was lacking in some fundamental ways. I think what is really needed is a good polyfill for `<input type='date'>` and `<input type='datetime-local'>`. Unfortunately, I don't know of any great ones. If someone were to start on a better one, I'd love to contribute. And if anyone wants to maintain this project, please let me know.
-
-Adam
-
----
-
 # ngQuickDate
 
 ngQuickDate is an [Angular.js](http://angularjs.org/) Date/Time picker directive. It stresses speed of data entry and simplicity while being highly configurable and easy to re-style.
@@ -14,7 +6,7 @@ ngQuickDate is an [Angular.js](http://angularjs.org/) Date/Time picker directive
 
 ## Download
 
-* [Version 1.3.3](https://github.com/adamalbrecht/ngQuickDate/archive/1.3.3.zip)
+* [Version 1.3.4](https://github.com/adamalbrecht/ngQuickDate/archive/1.3.4.zip)
 
 * Only compatible with Angular 1.2.x. For a version compatible with Angular 1.0.x, checkout the angular-1.0 branch.
 
@@ -28,11 +20,9 @@ Or add it to your bower.json file:
 
 ```javascript
 dependencies: {
-  "ngQuickDate": "~1.3.0"
+  "ngQuickDate": "~1.3.4"
 }
 ```
-
-*No dependencies (besides Angular) are required, but its date parsing capabilities can be improved by 3rd party libraries. See [Smarter Date/Time Parsing](#smarter-datetime-parsing) for more info. And it's styling can be improved by using a font icon library like [Font Awesome](http://fontawesome.io/). See the [Styling](#styling) and [Configuration](#configuration-options) sections.*
 
 ## Demo
 
