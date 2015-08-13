@@ -115,10 +115,10 @@ app.directive "quickDatepicker", ['ngQuickDateDefaults', '$filter', '$sce', (ngQ
       if ngModelCtrl.$modelValue
         date = ngModelCtrl.$modelValue
         if typeof ngModelCtrl.$modelValue == 'string'
-          date = moment.parseZone(ngModelCtrl.$modelValue)
+          date = moment(ngModelCtrl.$modelValue)
       setupCalendarView()
       setInputFieldValues date
-      scope.mainButtonStr = if date then moment.parseZone(ngModelCtrl.$modelValue).format(scope.labelFormat) else scope.placeholder
+      scope.mainButtonStr = if date then moment(ngModelCtrl.$modelValue).format(scope.labelFormat) else scope.placeholder
       scope.invalid = ngModelCtrl.$invalid
 
 
