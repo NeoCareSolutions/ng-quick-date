@@ -15,10 +15,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'bower_components/angular/angular.js',
-      'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/jquery/jquery.js',
-      'bower_components/moment/moment.js',
+      'app/bower_components/angular/angular.js',
+      'app/bower_components/angular-mocks/angular-mocks.js',
+      'app/bower_components/jquery/jquery.js',
+      'app/bower_components/moment/moment.js',
       'vendor/browserTrigger.js',
       'src/*.coffee',
       'spec/*.coffee'
